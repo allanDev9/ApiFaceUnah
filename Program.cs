@@ -1,9 +1,19 @@
+using ApiFaceUnah;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+//Get connection string
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
+//Add the DbContext and configure MYSQL 
+builder.Services.AddDbContext<DBContext>(options => 
+    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString))
+);
+
+// Add services to the container.
 builder.Services.AddControllers();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddOpenApi();
 
 var app = builder.Build();
@@ -14,10 +24,26 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
 app.MapControllers();
+
+//verify database connection on startup
+try
+{
+    using (var scope = app.Services.CreateScope())
+    {
+        var db = scope.ServiceProvider.GetRequiredService<DBContext>();
+        db.Database.CanConnect();
+
+        Console.WriteLine("Conectado a Mysql correctamente");
+    }  
+
+}catch(Exception ex)
+{
+    Console.WriteLine("Error al conectar a Mysql:" + ex.Message);
+}
 
 app.Run();
