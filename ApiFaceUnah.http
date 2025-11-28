@@ -1,0 +1,6 @@
+@ApiFaceUnah_HostAddress = http://localhost:5262
+
+GET {{ApiFaceUnah_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
