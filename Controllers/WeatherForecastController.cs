@@ -8,19 +8,40 @@ namespace ApiFaceUnah.Controllers
     {
         private static readonly string[] Summaries =
         [
-            "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
+            "Allan", "Alcides", "Paty", "Cool", "Mild", "Warm", "Balmy", "Juan", "Sweltering", "Scorching"
         ];
 
-        [HttpGet(Name = "GetWeatherForecast")]
-        public IEnumerable<WeatherForecast> Get()
+        [HttpGet(Name = "GetWeateherForecast")]
+        public IActionResult Get()
         {
-            return Enumerable.Range(1, 5).Select(index => new WeatherForecast
+            var lista = new List<WeatherForecast>();
+
+            foreach (var index in Enumerable.Range(1, 10))
             {
-                Date = DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-                TemperatureC = Random.Shared.Next(-20, 55),
-                Summary = Summaries[Random.Shared.Next(Summaries.Length)]
-            })
-            .ToArray();
+                if (index > 10)
+                {
+                    return BadRequest(new
+                    {
+                        Message = "El Id generado no puede ser mayor que 10",
+                        IdGenerado = index
+                    });
+                }
+
+                lista.Add(new WeatherForecast
+                {
+                    Id = index,
+                    Summary = Summaries[(index - 1) % Summaries.Length],
+
+                });
+
+            }
+
+            return Ok(new
+            {
+                Message = "Datos generados correctamente",
+                Total = lista.Count,
+                Data = lista
+            });
         }
     }
 }
