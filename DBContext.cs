@@ -8,5 +8,7 @@ namespace ApiFaceUnah
             : base(options)
         { 
         }
+
+        public DbSet<Models.Users> Users { get; set; } = null!; 
     }
 }
