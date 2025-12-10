@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace ApiFaceUnah.Controllers
@@ -21,14 +20,11 @@ namespace ApiFaceUnah.Controllers
         {
             var users = await _context.Users.ToListAsync();
 
-            if(users == null)
-            {
-                return NotFound(
-                        new { message = "No users found"}
-                    ); 
-            }
-
-            return Ok(users);
+            return users == null
+                ? (ActionResult<IEnumerable<Models.Users>>)NotFound(
+                        new { message = "No hay usuarios" }
+                    )
+                : (ActionResult<IEnumerable<Models.Users>>)Ok(users);
         }
 
         // Get: api/users/{id}
@@ -37,24 +33,98 @@ namespace ApiFaceUnah.Controllers
         {
             var user = await _context.Users.FindAsync(id);
 
-            if(user == null)
-            {
-                return NotFound(
-                    new { message = "User not found"}
-                    );
-            }
-
-            return Ok(user);
+            return user == null
+                ? (ActionResult<Models.Users>)NotFound(
+                    new { message = "Usuario no encontrado" }
+                    )
+                : (ActionResult<Models.Users>)Ok(user);
         }
 
         // POST: api/users
         [HttpPost]
         public async Task<ActionResult<Models.Users>> CreateUser(Models.Users user)
         {
+            user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
+
+            // Creación del usuario
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetUsersId), new { id = user.Id }, user);
+
+            return Ok(
+                new
+                {
+                    message = "Usuario creado exitosamente",
+                    createdUser = new
+                    {
+                        user.Username,
+                        user.Password,
+                        user.Email,
+                        user.Phone,
+                        user.Active
+                    }
+                }
+                );
+        }
+
+        // Put: api/users/{id}
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateUser(int id, Models.Users user)
+        {
+            var existingUser = await _context.Users.FindAsync(id);
+
+            if (existingUser == null)
+            {
+                return NotFound(
+                        new
+                        {
+                            message = "Usuario no encontrado"
+                        }
+                    );
+            }
+
+            existingUser.Username = user.Username;
+            existingUser.Password = user.Password;
+            existingUser.Email = user.Email;
+            existingUser.Phone = user.Phone;
+            existingUser.Active = user.Active;
+
+            await _context.SaveChangesAsync();
+
+            return Ok(
+                    new
+                    {
+                        message = "Usuario actualizado correctamente",
+                        user = existingUser
+                    }
+                );
+        }
+
+        //Delete: api/users/{id}
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DelectingUser(int id)
+        {
+            var user = await _context.Users.FindAsync(id);
+            if (user == null)
+            {
+                return NotFound(
+                        new
+                        {
+                            message = "Usuario no encontrado"
+                        }
+                    );
+            }
+
+            _context.Users.Remove(user);
+            await _context.SaveChangesAsync();
+
+            return Ok(
+                new
+                {
+                    message = "Usuario eliminado exitosamente",
+                    user
+                }
+            );
         }
     }
 }
