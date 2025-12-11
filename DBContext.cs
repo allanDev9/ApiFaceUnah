@@ -6,9 +6,9 @@ namespace ApiFaceUnah
     {
         public DBContext(DbContextOptions<DBContext> options)
             : base(options)
-        { 
-        } 
+        {
+        }
 
-        public DbSet<Models.Users> Users { get; set; } = null!; 
+        public DbSet<Models.Users> Users { get; set; }
     }
 }

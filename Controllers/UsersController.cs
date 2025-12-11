@@ -97,12 +97,12 @@ namespace ApiFaceUnah.Controllers
                         message = "Usuario actualizado correctamente",
                         user = existingUser
                     }
-                );
+                    );
         }
 
         //Delete: api/users/{id}
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DelectingUser(int id)
+        public async Task<IActionResult> DeletingUser(int id)
         {
             var user = await _context.Users.FindAsync(id);
             if (user == null)
