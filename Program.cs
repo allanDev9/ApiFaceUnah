@@ -13,6 +13,9 @@ builder.Services.AddDbContext<DBContext>(options =>
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString))
 );
 
+var port = Environment.GetEnvironmentVariable("WEBSITES_PORT") ?? "8080";
+builder.WebHost.UseUrls($"http://*:{port}");
+
 // Add services to the container.
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
