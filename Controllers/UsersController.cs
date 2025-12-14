@@ -24,7 +24,9 @@ namespace ApiFaceUnah.Controllers
                 ? (ActionResult<IEnumerable<Models.Users>>)NotFound(
                         new { message = "No hay usuarios" }
                     )
-                : (ActionResult<IEnumerable<Models.Users>>)Ok(users);
+                : (ActionResult<IEnumerable<Models.Users>>)Ok(
+                    new { message = "Usuarios", users }
+                );
         }
 
         // Get: api/users/{id}
