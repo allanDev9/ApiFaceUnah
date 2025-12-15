@@ -20,13 +20,13 @@ namespace ApiFaceUnah.Controllers
         {
             var users = await _context.Users.ToListAsync();
 
-            return users == null
-                ? (ActionResult<IEnumerable<Models.UserModel>>)NotFound(
-                        new { message = "No hay usuarios" }
+            return users != null
+                ? (ActionResult<IEnumerable<Models.UserModel>>)Ok(
+                        new { message = "Usuarios obtenidos:", users }
                     )
-                : (ActionResult<IEnumerable<Models.UserModel>>)Ok(
-                    new { message = "Usuarios", users }
-                );
+                : (ActionResult<IEnumerable<Models.UserModel>>)NotFound(
+                        new { message = "No se encontraron usuarios" }
+                    );
         }
 
         // Get: api/users/{id}
@@ -35,11 +35,13 @@ namespace ApiFaceUnah.Controllers
         {
             var user = await _context.Users.FindAsync(id);
 
-            return user == null
-                ? (ActionResult<Models.UserModel>)NotFound(
-                    new { message = "Usuario no encontrado" }
+            return user != null
+                ? (ActionResult<Models.UserModel>)Ok(
+                        new { message = "Usuario obtenido:", user }
                     )
-                : (ActionResult<Models.UserModel>)Ok(user);
+                : (ActionResult<Models.UserModel>)NotFound(
+                        new { message = "Usuario no encontrado" }
+                    );
         }
 
         // POST: api/users
@@ -78,10 +80,7 @@ namespace ApiFaceUnah.Controllers
             if (existingUser == null)
             {
                 return NotFound(
-                        new
-                        {
-                            message = "Usuario no encontrado"
-                        }
+                        new { message = "Usuario no encontrado" }
                     );
             }
 
@@ -95,10 +94,7 @@ namespace ApiFaceUnah.Controllers
 
             return Ok(
                     new
-                    {
-                        message = "Usuario actualizado correctamente",
-                        user = existingUser
-                    }
+                    { message = "Usuario actualizado correctamente", user = existingUser }
                     );
         }
 
@@ -111,9 +107,7 @@ namespace ApiFaceUnah.Controllers
             {
                 return NotFound(
                         new
-                        {
-                            message = "Usuario no encontrado"
-                        }
+                        { message = "Usuario no encontrado" }
                     );
             }
 
@@ -122,10 +116,7 @@ namespace ApiFaceUnah.Controllers
 
             return Ok(
                 new
-                {
-                    message = "Usuario eliminado exitosamente",
-                    user
-                }
+                { message = "Usuario eliminado exitosamente", user }
             );
         }
     }
