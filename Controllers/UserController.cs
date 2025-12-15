@@ -5,46 +5,46 @@ namespace ApiFaceUnah.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UsersController : ControllerBase
+    public class UserController : ControllerBase
     {
         private readonly DBContext _context;
 
-        public UsersController(DBContext context)
+        public UserController(DBContext context)
         {
             _context = context;
         }
 
         // Get: api/users
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Models.Users>>> GetUsers()
+        public async Task<ActionResult<IEnumerable<Models.UserModel>>> GetUsers()
         {
             var users = await _context.Users.ToListAsync();
 
             return users == null
-                ? (ActionResult<IEnumerable<Models.Users>>)NotFound(
+                ? (ActionResult<IEnumerable<Models.UserModel>>)NotFound(
                         new { message = "No hay usuarios" }
                     )
-                : (ActionResult<IEnumerable<Models.Users>>)Ok(
+                : (ActionResult<IEnumerable<Models.UserModel>>)Ok(
                     new { message = "Usuarios", users }
                 );
         }
 
         // Get: api/users/{id}
         [HttpGet("{id}")]
-        public async Task<ActionResult<Models.Users>> GetUsersId(int id)
+        public async Task<ActionResult<Models.UserModel>> GetUsersId(int id)
         {
             var user = await _context.Users.FindAsync(id);
 
             return user == null
-                ? (ActionResult<Models.Users>)NotFound(
+                ? (ActionResult<Models.UserModel>)NotFound(
                     new { message = "Usuario no encontrado" }
                     )
-                : (ActionResult<Models.Users>)Ok(user);
+                : (ActionResult<Models.UserModel>)Ok(user);
         }
 
         // POST: api/users
         [HttpPost]
-        public async Task<ActionResult<Models.Users>> CreateUser(Models.Users user)
+        public async Task<ActionResult<Models.UserModel>> CreateUser(Models.UserModel user)
         {
             user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
 
@@ -71,7 +71,7 @@ namespace ApiFaceUnah.Controllers
 
         // Put: api/users/{id}
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateUser(int id, Models.Users user)
+        public async Task<IActionResult> UpdateUser(int id, Models.UserModel user)
         {
             var existingUser = await _context.Users.FindAsync(id);
 

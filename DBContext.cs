@@ -9,6 +9,6 @@ namespace ApiFaceUnah
         {
         }
 
-        public DbSet<Models.Users> Users { get; set; }
+        public DbSet<Models.UserModel> Users { get; set; }
     }
 }
